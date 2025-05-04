@@ -1,0 +1,23 @@
+build:
+    dockerBuildPath: "."
+    install:
+        - apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-kor poppler-utils
+        - pip install --no-cache-dir -r requirements.txt
+
+startCommand:
+    command:
+        - uvicorn
+        - mcp_app.main:app
+        - --host
+        - "0.0.0.0"
+        - --port
+        - "8000"
+
+transport:
+    type: http
+    port: 8000
+    http:
+        toolsList: "/tools/list"
+        toolsListMethod: "POST"
+        toolsCall: "/tools/call"
+        toolsCallMethod: "POST"

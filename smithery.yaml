@@ -1,29 +1,67 @@
-openapi: "3.0.1"
-info:
-    title: PDF to DOCX Converter
-    version: "1.0.0"
+# ────────────────────────────────────────────────────────────────────────
+# ▶ 1) descriptor: OpenAPI 스펙 정의
+# ────────────────────────────────────────────────────────────────────────
+descriptor:
+    openapi: "3.0.1"
+    info:
+        title: PDF to DOCX Converter
+        version: "1.0.0"
+        description: Convert PDF documents into editable DOCX files seamlessly.
+    servers:
+        - url: "/" # MCP 서버 루트
+    paths:
+        /tools/list:
+            post:
+                tags: ["tools"]
+                operationId: listTools
+                responses:
+                    "200":
+                        description: OK
+                security:
+                    - anonymous: []
+        /tools/call:
+            post:
+                tags: ["tools"]
+                operationId: callTool
+                requestBody:
+                    required: true
+                responses:
+                    "200":
+                        description: OK
+                security:
+                    - anonymous: []
 
-paths:
-    /tools/list:
-        post:
-            tags: ["tools"]
-            operationId: listTools
-            responses:
-                "200":
-                    description: OK
-            security:
-                - anonymous: []
-    /tools/call:
-        post:
-            tags: ["tools"]
-            operationId: callTool
-            requestBody:
-                required: true
-            responses:
-                "200":
-                    description: OK
+    components:
+        securitySchemes:
+            anonymous:
+                type: none
 
-components:
-    securitySchemes:
-        anonymous:
-            type: none
+# ────────────────────────────────────────────────────────────────────────
+# ▶ 2) MCP 서버 빌드·실행·transport 설정
+# ────────────────────────────────────────────────────────────────────────
+build:
+    dockerBuildPath: "."
+    install:
+        - apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-kor poppler-utils
+        - pip install --no-cache-dir -r requirements.txt
+
+startCommand:
+    type: http
+    commandFunction:
+        command:
+            - uvicorn
+            - mcp_app.main:app
+            - --host
+            - "0.0.0.0"
+            - --port
+            - "8000"
+
+transport:
+    type: http
+    http:
+        toolsList:
+            path: "/tools/list"
+            method: "POST"
+        toolsCall:
+            path: "/tools/call"
+            method: "POST"

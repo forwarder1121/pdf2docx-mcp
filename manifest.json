@@ -1,0 +1,19 @@
+{
+    "name": "pdf2docx-ocr",
+    "display_name": "PDF to DOCX with OCR",
+    "description": "Convert PDF files to editable DOCX format with optional OCR (English + Korean support).",
+    "entrypoint": "pdf2docx.main:app",
+    "version": "1.0.0",
+    "license": "MIT",
+    "author": "forwarder1121",
+    "tags": ["pdf", "docx", "ocr", "converter", "document"],
+    "icon": "📄",
+    "categories": ["File Conversion", "Document Processing"],
+    "capabilities": [
+        {
+            "name": "convert-pdf",
+            "description": "Convert a PDF to a DOCX file using optional OCR",
+            "type": "file"
+        }
+    ]
+}

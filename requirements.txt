@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pytesseract
+pdf2image
+pdf2docx
+python-docx
+python-multipart

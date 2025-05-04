@@ -1,4 +1,4 @@
-# smithery.yaml
+# smithery.yaml (프로젝트 루트)
 build:
     dockerBuildPath: "."
     install:
@@ -6,7 +6,7 @@ build:
         - pip install --no-cache-dir -r requirements.txt
 
 startCommand:
-    type: http
+    type: http # stdio 가 아닌 HTTP 서버로 실행
     commandFunction:
         command:
             - uvicorn
@@ -19,17 +19,14 @@ startCommand:
 transport:
     type: http
     http:
+        # ← 이 부분을 추가해서 "인증 없음" 모드 활성화
+        auth:
+            type: none
+
+        # 이하 도구 엔드포인트 설정
         toolsList:
             path: "/tools/list"
             method: "POST"
         toolsCall:
             path: "/tools/call"
             method: "POST"
-
-# ↓ 아래 섹션을 추가
-securitySchemes:
-    anonymous:
-        type: none
-
-security:
-    - anonymous: []

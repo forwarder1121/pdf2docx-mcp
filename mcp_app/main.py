@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 import os
 import shutil
-from pdf2docx.convert_pdf_to_docx_ocr import convert_pdf_to_docx
+from mcp_app.convert_pdf_to_docx_ocr import convert_pdf_to_docx
 
 app = FastAPI()
 

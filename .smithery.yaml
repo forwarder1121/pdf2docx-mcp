@@ -1,10 +1,12 @@
+entrypoint: mcp_app.main:app
+transport: http
+
 build:
     install:
-        - apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-kor tesseract-ocr-eng poppler-utils libglib2.0-0
+        - apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-kor tesseract-ocr-osd poppler-utils
         - pip install --no-cache-dir -r requirements.txt
     copy:
         - .
 run:
     command: uvicorn mcp_app.main:app --host 0.0.0.0 --port 8000
     port: 8000
-entrypoint: mcp_app.main:app

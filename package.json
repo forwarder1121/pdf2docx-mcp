@@ -20,5 +20,8 @@
     "license": "ISC",
     "engines": {
         "node": ">=14"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.11.0"
     }
 }

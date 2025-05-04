@@ -1,64 +1,103 @@
-from fastapi import FastAPI, UploadFile, File, Form, Request
-from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, FileResponse
 import os
 import shutil
-from convert_pdf_to_docx_ocr import convert_pdf_to_docx
+from pdf2docx.convert_pdf_to_docx_ocr import convert_pdf_to_docx
 
 app = FastAPI()
 
-# 📁 파일 업로드 기반 변환 (사용자 UI 전용)
-@app.post("/convert")
-async def convert_pdf(
-    file: UploadFile = File(...),
-    ocr: bool = Form(True)
-):
-    input_path = f"temp/{file.filename}"
-    output_path = input_path.replace(".pdf", ".docx")
-
-    os.makedirs("temp", exist_ok=True)
-
-    with open(input_path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
-
-    convert_pdf_to_docx(input_path, output_path, ocr=ocr)
-
-    return FileResponse(output_path, filename=os.path.basename(output_path))
-
-
-@app.get("/")
-def read_root():
-    return {"message": "PDF to DOCX with OCR MCP server"}
-
-
-# 🌐 MCP용 핸들러: tools/list
+# MCP가 요구하는 /tools/list 엔드포인트
 @app.post("/tools/list")
-def list_tools():
+async def list_tools():
     return {
         "tools": [
             {
                 "name": "convert-pdf",
-                "description": "Convert a PDF to DOCX using OCR"
+                "description": "Convert a PDF to a DOCX file using optional OCR",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "ocr": {
+                            "type": "boolean",
+                            "default": True
+                        },
+                        "filename": {
+                            "type": "string",
+                            "description": "Filename of uploaded PDF"
+                        },
+                        "file_content": {
+                            "type": "string",
+                            "description": "Base64 encoded file content"
+                        }
+                    },
+                    "required": ["filename", "file_content"]
+                }
             }
         ]
     }
 
-# 📤 MCP용 핸들러: tools/call
+# MCP가 요구하는 JSON-RPC 2.0 형태의 호출 처리
 @app.post("/tools/call")
-def call_tool(payload: dict):
-    if payload.get("name") != "convert-pdf":
-        return {"error": f"Unknown tool: {payload.get('name')}"}
+async def call_tool(request: Request):
+    body = await request.json()
+    method = body.get("method")
+    params = body.get("params", {})
+    request_id = body.get("id")
 
-    args = payload.get("arguments", {})
-    input_path = args.get("input_path")
-    output_path = args.get("output_path")
-    use_ocr = args.get("use_ocr", True)
+    if method == "convert-pdf":
+        try:
+            import base64
+            filename = params["filename"]
+            file_content = base64.b64decode(params["file_content"])
+            ocr = params.get("ocr", True)
 
-    if not input_path or not output_path:
-        return {"error": "Missing required parameters: input_path or output_path"}
+            # 파일 저장
+            os.makedirs("temp", exist_ok=True)
+            input_path = f"temp/{filename}"
+            output_path = input_path.replace(".pdf", ".docx")
 
-    try:
-        convert_pdf_to_docx(input_path, output_path, ocr=use_ocr)
-        return {"status": "success", "output_path": output_path}
-    except Exception as e:
-        return {"status": "failed", "error": str(e)}
+            with open(input_path, "wb") as f:
+                f.write(file_content)
+
+            # 변환 수행
+            convert_pdf_to_docx(input_path, output_path, ocr=ocr)
+
+            # 결과 파일을 base64로 반환
+            with open(output_path, "rb") as f:
+                converted_data = base64.b64encode(f.read()).decode("utf-8")
+
+            result = {
+                "filename": os.path.basename(output_path),
+                "docx_base64": converted_data
+            }
+
+        except Exception as e:
+            return JSONResponse({
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "error": {
+                    "code": -32000,
+                    "message": str(e)
+                }
+            })
+
+        return JSONResponse({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": result
+        })
+
+    else:
+        return JSONResponse({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "error": {
+                "code": -32601,
+                "message": "Method not found"
+            }
+        })
+
+# 기본 루트 테스트용
+@app.get("/")
+def read_root():
+    return {"message": "MCP-compliant PDF to DOCX OCR server"}

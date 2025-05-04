@@ -1,15 +1,16 @@
 {
     "name": "@forwarder1121/pdf2docx-mcp",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "CLI to launch PDF→DOCX MCP server",
     "type": "module",
-    "main": "index.js",
+    "main": "bin/run-server.js",
     "bin": {
         "pdf2docx-mcp": "bin/run-server.js"
     },
     "scripts": {
         "start": "node bin/run-server.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "version:patch": "npm version patch && npm publish"
     },
     "keywords": [
         "mcp",
@@ -23,7 +24,7 @@
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.11.0",
-        "@smithery/sdk": "^0.1.0"
+        "@smithery/sdk": "^1.1.0"
     },
     "publishConfig": {
         "access": "public"

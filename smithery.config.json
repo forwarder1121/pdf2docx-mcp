@@ -11,5 +11,13 @@
             "--port",
             "8000"
         ]
+    },
+    "transport": {
+        "type": "http",
+        "port": 8000,
+        "http": {
+            "toolsList": "/tools/list",
+            "toolsCall": "/tools/call"
+        }
     }
 }

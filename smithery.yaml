@@ -1,3 +1,4 @@
+# smithery.yaml (프로젝트 루트)
 build:
     dockerBuildPath: "."
     install:
@@ -5,19 +6,22 @@ build:
         - pip install --no-cache-dir -r requirements.txt
 
 startCommand:
-    command:
-        - uvicorn
-        - mcp_app.main:app
-        - --host
-        - "0.0.0.0"
-        - --port
-        - "8000"
+    type: http # stdio 일 경우 "stdio"
+    commandFunction:
+        command:
+            - uvicorn
+            - mcp_app.main:app
+            - --host
+            - "0.0.0.0"
+            - --port
+            - "8000"
 
 transport:
     type: http
-    port: 8000
     http:
-        toolsList: "/tools/list"
-        toolsListMethod: "POST"
-        toolsCall: "/tools/call"
-        toolsCallMethod: "POST"
+        toolsList:
+            path: "/tools/list"
+            method: "POST"
+        toolsCall:
+            path: "/tools/call"
+            method: "POST"

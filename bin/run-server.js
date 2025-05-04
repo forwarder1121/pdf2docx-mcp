@@ -12,7 +12,7 @@
 import { spawn } from "child_process";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { StreamableHttpClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { createStdioServer } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

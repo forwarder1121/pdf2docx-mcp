@@ -1,10 +1,24 @@
+# Dockerfile
+
 FROM python:3.11-slim
 
 WORKDIR /app
 
+# 시스템 패키지 및 tesseract 설치 (영어 + 한국어 지원)
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-kor \
+    tesseract-ocr-eng \
+    poppler-utils \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# 의존성 복사 및 설치
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 앱 소스 복사
 COPY . .
 
-CMD ["uvicorn", "pdf2docx.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# FastAPI 앱 실행
+CMD ["uvicorn", "pdf2docx.main:app", "--host", "0.0.0.0", "--port", "8000"]

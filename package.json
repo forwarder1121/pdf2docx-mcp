@@ -1,0 +1,24 @@
+{
+    "name": "@forwarder1121/pdf2docx-mcp",
+    "version": "1.0.0",
+    "description": "CLI to launch PDF→DOCX MCP server",
+    "type": "module",
+    "main": "index.js",
+    "bin": {
+        "pdf2docx-mcp": "bin/run-server.js"
+    },
+    "scripts": {
+        "start": "node bin/run-server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "mcp",
+        "pdf2docx",
+        "converter"
+    ],
+    "author": "",
+    "license": "ISC",
+    "engines": {
+        "node": ">=14"
+    }
+}

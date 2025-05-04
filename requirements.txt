@@ -5,3 +5,4 @@ pdf2image
 pdf2docx  # 주의: 내부 모듈명과 충돌 가능성 있음
 python-docx
 python-multipart
+numpy<2.0

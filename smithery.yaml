@@ -1,6 +1,8 @@
 # ────────────────────────────────────────────────────────────────────────
-# ▶ 1) descriptor: OpenAPI 스펙 정의
+# PDF to DOCX Converter MCP 서버 설정 전체 (smithery.yaml)
 # ────────────────────────────────────────────────────────────────────────
+
+# 1) descriptor: OpenAPI 스펙 정의 (MCP v4)
 descriptor:
     openapi: "3.0.1"
     info:
@@ -8,7 +10,8 @@ descriptor:
         version: "1.0.0"
         description: Convert PDF documents into editable DOCX files seamlessly.
     servers:
-        - url: "/" # MCP 서버 루트
+        # Smithery 내부에서 "/"를 자동으로 매핑합니다
+        - url: "/"
     paths:
         /tools/list:
             post:
@@ -33,11 +36,12 @@ descriptor:
 
     components:
         securitySchemes:
+            # 익명(anonymous) 스킴 정의 → 아무 인증 없이 API 탭에 Authentication 블록이 뜨지 않음
             anonymous:
                 type: none
 
 # ────────────────────────────────────────────────────────────────────────
-# ▶ 2) MCP 서버 빌드·실행·transport 설정
+# 2) MCP 서버 빌드·실행·transport 설정
 # ────────────────────────────────────────────────────────────────────────
 build:
     dockerBuildPath: "."
@@ -65,3 +69,14 @@ transport:
         toolsCall:
             path: "/tools/call"
             method: "POST"
+
+# ────────────────────────────────────────────────────────────────────────
+# 3) (선택) Smithery 자체 config에도 anonymous 노출
+#    — descriptor 안에만 정의해도 충분하지만, 혹시를 위해 추가 가능합니다.
+# ────────────────────────────────────────────────────────────────────────
+securitySchemes:
+    anonymous:
+        type: none
+
+security:
+    - anonymous: []

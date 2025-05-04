@@ -1,41 +1,29 @@
-# ──────────────────────────────────────────────────────────────────────────────
-# pdf2docx-mcp 프로젝트 루트의 smithery.yaml 전체
-# ──────────────────────────────────────────────────────────────────────────────
-build:
-    dockerBuildPath: "."
-    install:
-        - apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-kor poppler-utils
-        - pip install --no-cache-dir -r requirements.txt
+openapi: "3.0.1"
+info:
+    title: PDF to DOCX Converter
+    version: "1.0.0"
 
-startCommand:
-    type: http
-    commandFunction:
-        command:
-            - uvicorn
-            - mcp_app.main:app
-            - --host
-            - "0.0.0.0"
-            - --port
-            - "8000"
+paths:
+    /tools/list:
+        post:
+            tags: ["tools"]
+            operationId: listTools
+            responses:
+                "200":
+                    description: OK
+            security:
+                - anonymous: []
+    /tools/call:
+        post:
+            tags: ["tools"]
+            operationId: callTool
+            requestBody:
+                required: true
+            responses:
+                "200":
+                    description: OK
 
-transport:
-    type: http
-    http:
-        toolsList:
-            path: "/tools/list"
-            method: "POST"
-        toolsCall:
-            path: "/tools/call"
-            method: "POST"
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 여기가 핵심: 인증 스킴을 정의하지 않으면 API 탭에 Authentication 블록이 안 뜹니다.
-# 사용자 인증 없이 모두에게 공개하려면 아래 anonymous 스킴 사용
-# ──────────────────────────────────────────────────────────────────────────────
-securitySchemes:
-    anonymous:
-        type: none
-
-security:
-    - anonymous: []
-# ──────────────────────────────────────────────────────────────────────────────
+components:
+    securitySchemes:
+        anonymous:
+            type: none

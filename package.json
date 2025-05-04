@@ -1,6 +1,6 @@
 {
     "name": "@forwarder1121/pdf2docx-mcp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "CLI to launch PDF→DOCX MCP server",
     "type": "module",
     "main": "index.js",

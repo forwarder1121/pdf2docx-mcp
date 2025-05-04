@@ -1,4 +1,7 @@
 # smithery.yaml (프로젝트 루트)
+# 공개 서버로 설정하여 누구나 Remote MCP 방식으로 접근할 수 있도록 활성화합니다.
+public: true
+
 build:
     dockerBuildPath: "."
     install:
